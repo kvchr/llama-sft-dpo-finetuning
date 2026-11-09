@@ -1,0 +1,9 @@
+adapters/
+outputs_quick/
+llama_sft_dpo_outputs.zip
+llama_sft_dpo_outputs_quick.zip
+outputs/tables/eval_answers.csv
+outputs/tables/eval_pairs.json
+sft_dpo.py
+__pycache__/
+.ipynb_checkpoints/

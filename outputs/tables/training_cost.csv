@@ -1,0 +1,3 @@
+method,steps,stopped early,best step,examples seen,trainable params (M),training min,s per step,validation min,peak GPU memory (GB)
+SFT,300,False,300,2400,24.313856,41.346880000000006,8.269376000000001,17.753386666666664,3.548381184
+DPO,250,False,250,1000,24.313856,28.71561,6.8917464,15.780655,4.347396096

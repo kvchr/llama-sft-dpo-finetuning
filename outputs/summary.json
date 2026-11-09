@@ -1,0 +1,255 @@
+{
+ "config": {
+  "seed": 3407,
+  "lora_r": 16,
+  "lora_alpha": 16,
+  "patience": 3,
+  "max_seq_length": 2048,
+  "sft_train": 6000,
+  "sft_val": 200,
+  "sft_steps": 300,
+  "sft_warmup": 10,
+  "sft_eval_every": 25,
+  "dpo_train": 4000,
+  "dpo_val": 100,
+  "dpo_test": 200,
+  "dpo_steps": 250,
+  "dpo_eval_every": 25,
+  "dpo_beta": 0.1,
+  "dpo_max_length": 1024,
+  "n_eval": 200,
+  "max_new_tokens": 256,
+  "qual_max_new_tokens": 384,
+  "gen_batch": 8,
+  "n_boot": 1000
+ },
+ "gpu": "Tesla T4",
+ "python": "3.13.16",
+ "versions": {
+  "torch": "2.11.0+cu130",
+  "transformers": "5.17.0",
+  "trl": "1.15.0",
+  "peft": "0.21.2",
+  "datasets": "4.8.5",
+  "accelerate": "1.15.0",
+  "bitsandbytes": "0.50.2",
+  "unsloth": "2026.11.3"
+ },
+ "sft": {
+  "steps": 300,
+  "max_steps": 300,
+  "stopped_early": false,
+  "best_step": 300,
+  "best_eval_loss": 0.7725601196289062,
+  "examples_seen": 2400,
+  "train_runtime_s": 3546.016,
+  "eval_time_s": 1065.2032,
+  "train_time_s": 2480.8128,
+  "peak_memory_gb": 3.548381184,
+  "trainable_params": 24313856
+ },
+ "dpo": {
+  "steps": 250,
+  "max_steps": 250,
+  "stopped_early": false,
+  "best_step": 250,
+  "best_eval_loss": 0.13386410474777222,
+  "examples_seen": 1000,
+  "train_runtime_s": 2669.7759,
+  "eval_time_s": 946.8393,
+  "train_time_s": 1722.9366,
+  "peak_memory_gb": 4.347396096,
+  "trainable_params": 24313856
+ },
+ "eval_candidates": 469,
+ "eval_conversations": 188,
+ "eval_samples": 200,
+ "similarity": [
+  {
+   "model": "Base",
+   "BLEU": 10.683059111020473,
+   "ROUGE-L": 0.22043307752109179,
+   "BERTScore F1": 0.14627244460831165,
+   "mean words": 151.38,
+   "empty answers": 0.0,
+   "generation min": 9.075739789009095
+  },
+  {
+   "model": "SFT",
+   "BLEU": 13.90326413656364,
+   "ROUGE-L": 0.24830138781024694,
+   "BERTScore F1": 0.21170412462401625,
+   "mean words": 135.16,
+   "empty answers": 0.0,
+   "generation min": 12.370475252469381
+  },
+  {
+   "model": "DPO",
+   "BLEU": 10.65441177879716,
+   "ROUGE-L": 0.21863447799631744,
+   "BERTScore F1": 0.14677445099337605,
+   "mean words": 149.255,
+   "empty answers": 0.0,
+   "generation min": 12.53922400077184
+  },
+  {
+   "model": "Reference (human)",
+   "BLEU": NaN,
+   "ROUGE-L": NaN,
+   "BERTScore F1": NaN,
+   "mean words": 144.065,
+   "empty answers": NaN,
+   "generation min": NaN
+  }
+ ],
+ "differences": [
+  {
+   "comparison": "SFT - Base",
+   "metric": "ROUGE-L",
+   "difference": 0.02786831028915517,
+   "ci_low": 0.014777780022094088,
+   "ci_high": 0.041799187448249474,
+   "clear": true
+  },
+  {
+   "comparison": "SFT - Base",
+   "metric": "BERTScore F1",
+   "difference": 0.06543168001570457,
+   "ci_low": 0.043983129082880074,
+   "ci_high": 0.08794844198307068,
+   "clear": true
+  },
+  {
+   "comparison": "SFT - Base",
+   "metric": "mean words",
+   "difference": -16.22,
+   "ci_low": -23.320375,
+   "ci_high": -8.953125000000002,
+   "clear": true
+  },
+  {
+   "comparison": "SFT - Base",
+   "metric": "BLEU",
+   "difference": 3.2202050255431676,
+   "ci_low": 1.7334706241062356,
+   "ci_high": 4.552740989637556,
+   "clear": true
+  },
+  {
+   "comparison": "DPO - Base",
+   "metric": "ROUGE-L",
+   "difference": -0.0017985995247743795,
+   "ci_low": -0.007467791292540882,
+   "ci_high": 0.003810725778733532,
+   "clear": false
+  },
+  {
+   "comparison": "DPO - Base",
+   "metric": "BERTScore F1",
+   "difference": 0.0005020063850643344,
+   "ci_low": -0.010193433260054431,
+   "ci_high": 0.010303577319313034,
+   "clear": false
+  },
+  {
+   "comparison": "DPO - Base",
+   "metric": "mean words",
+   "difference": -2.125,
+   "ci_low": -5.255625,
+   "ci_high": 1.455,
+   "clear": false
+  },
+  {
+   "comparison": "DPO - Base",
+   "metric": "BLEU",
+   "difference": -0.02864733222331317,
+   "ci_low": -0.6081179906463621,
+   "ci_high": 0.5132068770416714,
+   "clear": false
+  },
+  {
+   "comparison": "DPO - SFT",
+   "metric": "ROUGE-L",
+   "difference": -0.029666909813929547,
+   "ci_low": -0.043542579183839046,
+   "ci_high": -0.016369084002335447,
+   "clear": true
+  },
+  {
+   "comparison": "DPO - SFT",
+   "metric": "BERTScore F1",
+   "difference": -0.06492967363064023,
+   "ci_low": -0.08700465655908705,
+   "ci_high": -0.04279572928343024,
+   "clear": true
+  },
+  {
+   "comparison": "DPO - SFT",
+   "metric": "mean words",
+   "difference": 14.095,
+   "ci_low": 6.87075,
+   "ci_high": 20.67125,
+   "clear": true
+  },
+  {
+   "comparison": "DPO - SFT",
+   "metric": "BLEU",
+   "difference": -3.2488523577664807,
+   "ci_low": -4.53135039802099,
+   "ci_high": -1.843100012132293,
+   "clear": true
+  }
+ ],
+ "preference": [
+  {
+   "model": "Base",
+   "prefers chosen": 0.20103092783505155,
+   "mean logp margin": -0.6614848864600831,
+   "vs Base": NaN,
+   "ci_low": NaN,
+   "ci_high": NaN
+  },
+  {
+   "model": "SFT",
+   "prefers chosen": 0.2422680412371134,
+   "mean logp margin": -0.3554852722385495,
+   "vs Base": 0.041237113402061855,
+   "ci_low": -0.005154639175257732,
+   "ci_high": 0.08762886597938144
+  },
+  {
+   "model": "DPO",
+   "prefers chosen": 0.32989690721649484,
+   "mean logp margin": -0.42970936513054614,
+   "vs Base": 0.12886597938144329,
+   "ci_low": 0.08247422680412371,
+   "ci_high": 0.17525773195876287
+  }
+ ],
+ "cost": [
+  {
+   "method": "SFT",
+   "steps": 300,
+   "stopped early": false,
+   "best step": 300,
+   "examples seen": 2400,
+   "trainable params (M)": 24.313856,
+   "training min": 41.346880000000006,
+   "s per step": 8.269376000000001,
+   "validation min": 17.753386666666664,
+   "peak GPU memory (GB)": 3.548381184
+  },
+  {
+   "method": "DPO",
+   "steps": 250,
+   "stopped early": false,
+   "best step": 250,
+   "examples seen": 1000,
+   "trainable params (M)": 24.313856,
+   "training min": 28.71561,
+   "s per step": 6.8917464,
+   "validation min": 15.780655,
+   "peak GPU memory (GB)": 4.347396096
+  }
+ ]
+}

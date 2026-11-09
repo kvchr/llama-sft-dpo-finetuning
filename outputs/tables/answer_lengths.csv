@@ -1,0 +1,4 @@
+model,answers at the token limit,identical to Base
+Base,142,
+SFT,95,0
+DPO,139,7
