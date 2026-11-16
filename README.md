@@ -28,6 +28,10 @@ Both start from the same model, and both train small LoRA adapters on top of the
 
 In short: **SFT** brings the answers measurably closer to human answers. **DPO** clearly learns the preferences in its data and applies them to pairs it never saw. It does this mostly by making the worse answers less likely, and its answers to other conversations do not change measurably.
 
+![Results: change in similarity to human answers vs the base model, and per-pair log-probability changes on held-out preference pairs](outputs/figures/results_overview.png)
+
+*Left: SFT raises all three similarity scores (the 95 % intervals exclude 0); DPO stays at the base model's level. Right: each dot is a held-out preference pair. Above the dashed line, the better answer gained more log-probability than the worse one, compared with the base model. DPO's dots sit there in 97 % of the pairs, mostly because the worse answer dropped (dots far to the left).*
+
 ## Table of contents
 
 - [The task](#the-task)
@@ -60,7 +64,7 @@ The goals:
 
 | | SFT | DPO |
 |---|---|---|
-| Data | [FineTome-100k](https://huggingface.co/datasets/mlabonne/FineTome-100k): 6,000 training and 200 validation conversations | [Intel/orca_dpo_pairs](https://huggingface.co/datasets/Intel/orca_dpo_pairs): 4,000 training, 100 validation and 200 test pairs |
+| Data | [FineTome-100k](https://huggingface.co/datasets/mlabonne/FineTome-100k): 6,000 training and 200 validation conversations (5,999 used: one had no assistant text left after truncation to 2,048 tokens) | [Intel/orca_dpo_pairs](https://huggingface.co/datasets/Intel/orca_dpo_pairs): 4,000 training, 100 validation and 200 test pairs (3,933, 98 and 194 used: in the rest the prompt alone fills the 1,024-token limit) |
 | Format | Llama 3 chat template; the loss is computed only on the assistant's replies | each pair as a conversation (system, user, answer) |
 | Starting point | base model | base model (not the SFT model, so that both methods start from the same point) |
 | Batch and steps | 8 conversations per step, 300 steps (2,400 conversations) | 4 pairs per step, 250 steps (1,000 pairs), β = 0.1 |
@@ -72,11 +76,13 @@ The goals:
 - **Similarity to human answers.** 200 English conversations from the OpenAssistant (oasst1) validation split, each cut at a user message with the full history before it. The reference is the reply that volunteers ranked best. At most one sample is taken per conversation tree, until the trees run out. Answers use greedy decoding, up to 256 new tokens.
   - BLEU is sacreBLEU, computed over the whole corpus.
   - ROUGE-L is the F1 of the longest common subsequence.
-  - BERTScore F1 uses RoBERTa-large, layer 17, rescaled with the bert_score baseline. It is reimplemented because the bert_score package does not work with transformers 5, and it was checked against the package to 1e-6.
+  - BERTScore F1 uses RoBERTa-large, layer 17, rescaled with the bert_score baseline. It is reimplemented because the bert_score package does not work with transformers 5. A CPU test ([tests/check_models.py](tests/check_models.py)) compares it with the package on test sentences, using a smaller RoBERTa model with the same code path: the largest difference is 1 × 10⁻⁶.
   - Differences between models come with 95 % paired-bootstrap intervals.
 - **Preference.** On the 200 held-out Orca pairs, the log-probability that each model gives to the chosen and to the rejected answer. The pairs are tokenised and truncated exactly as DPO training does. Two measures are reported:
   - how often the chosen answer gets the higher log-probability per token;
   - how often the chosen answer gains more than the rejected one compared with the base model. For DPO this second measure is the implicit reward its loss compares (without β).
+
+  The same test file checks this scoring against a direct log-probability computation on a tiny model.
 - **Nine prompts** of my own, one for each of: instruction following, creativity, facts, arithmetic, logic, translation, summarisation, strict output format and a request that should be refused.
 
 ## Results
@@ -157,6 +163,7 @@ llama-sft-dpo-finetuning/
 ├── outputs/
 │   ├── summary.json               # configuration, library versions and all headline numbers
 │   ├── figures/
+│   │   ├── results_overview.png    # the headline results (drawn from the tables below)
 │   │   ├── sft_training.png
 │   │   └── dpo_training.png
 │   └── tables/
@@ -168,6 +175,8 @@ llama-sft-dpo-finetuning/
 │       ├── limit_split.csv                            # SFT and DPO vs Base on finished and on cut answers separately
 │       ├── training_cost.csv
 │       └── qualitative.csv, qualitative.md             # the nine prompts and all answers
+├── tests/
+│   └── check_models.py            # CPU test: BERTScore and preference scoring against independent references
 └── report/
     └── llama-sft-dpo-finetuning_report_GR.pdf          # full report (Greek)
 ```
@@ -184,6 +193,13 @@ The notebook is made for Kaggle (free GPU):
 4. When it finishes, download `llama_sft_dpo_outputs.zip` from the **Output** tab.
 
 The first cell installs the pinned versions (`unsloth==2026.11.3`, `trl==1.15.0`, `transformers==5.17.0`, `datasets==4.8.5`). No Hugging Face token is needed. The notebook also runs on any machine with a CUDA GPU of 16 GB and a recent PyTorch, but it was only run on Kaggle. Setting `QUICK = True` runs every cell on a few examples to check the setup; no result here uses it.
+
+The metric code can be tested on any computer, without a GPU:
+
+```bash
+pip install torch "transformers<5" bert-score==0.3.13 pandas
+python tests/check_models.py llama_sft_dpo.ipynb
+```
 
 ## References
 
